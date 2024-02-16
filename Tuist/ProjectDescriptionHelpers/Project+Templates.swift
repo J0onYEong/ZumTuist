@@ -86,16 +86,39 @@ public let workSpaceName = "JuniosWorkspace"
 
 
 // MARK: - 영역별 타입정의
+public enum ModuleTerritory: String {
+    case presentation
+    case domain
+    case data
+    
+    var directoryName: String {
+        switch self {
+        case .presentation:
+            "Presentation"
+        case .domain:
+            "Domain"
+        case .data:
+            "Data"
+        }
+    }
+}
+
 public enum Feature: String, ModuleNaming {
     case feature1 = "Feature1"
+    
+    var moduleTerritory: ModuleTerritory { .presentation }
 }
 
 public enum Domain: String, ModuleNaming {
     case domain1 = "domain1"
+    
+    var moduleTerritory: ModuleTerritory { .domain }
 }
 
 public enum Service: String, ModuleNaming {
     case service1 = "service1"
+    
+    var moduleTerritory: ModuleTerritory { .data }
 }
 
 /// 각각의 영역들의 모듈은 하나의 워크스페이스(JuniosWorkspace)에 속하게되는 프로젝트들이다.
@@ -104,11 +127,12 @@ protocol ModuleNaming: RawRepresentable<String> {
     
     var name: String { get }
     var rootPath: String { get }
+    var moduleTerritory: ModuleTerritory { get }
 }
 
 extension ModuleNaming {
     
     public var name: String { "\(self.rawValue)\(type(of: self))" }
-    var path: String { "Modules/\(type(of: self))/\(name)" }
-    public var rootPath: String { "workSpaceName/\(path)" }
+    var path: String { "Modules/\(moduleTerritory.directoryName)/\(name)" }
+    public var rootPath: String { "\(workSpaceName)/\(path)" }
 }
